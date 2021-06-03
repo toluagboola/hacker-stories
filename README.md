@@ -2,6 +2,8 @@
 
 An application that lets you search for articles from Hacker News.
 
+![Hacker stories app](https://github.com/toluagboola/hacker-stories/blob/master/hacker-stories.png)
+
 ## Setup
 
 - Clone this repo to your machine
