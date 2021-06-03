@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Item renders snapshot 1`] = `
+<div
+  className="py-3 has-text-left"
+>
+  <p>
+    <a
+      className="is-size-5 has-text-weight-medium"
+      href="https://reactjs.org/"
+    >
+      React
+    </a>
+  </p>
+  <p
+    className="pb-1 is-capitalized"
+  >
+    <strong>
+      Author:
+    </strong>
+     
+    Jordan Walke
+  </p>
+  <p
+    className="pb-1 is-capitalized"
+  >
+    <strong>
+      Comments:
+    </strong>
+     
+    3
+  </p>
+  <p
+    className="pb-1 is-capitalized"
+  >
+    <strong>
+      Points:
+    </strong>
+     
+    4
+  </p>
+  <button
+    className="button is-small mt-2 dismiss"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <svg
+        fill="none"
+        height={24}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+        width={24}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polyline
+          points="20 6 9 17 4 12"
+        />
+      </svg>
+    </span>
+    <span>
+      Check
+    </span>
+  </button>
+</div>
+`;

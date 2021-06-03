@@ -1,0 +1,36 @@
+body {
+  font-family: "IBM Plex Mono", -apple-system;
+}
+
+#root {
+  max-width: 700px;
+  background: #161b22;
+}
+
+.title,
+strong {
+  color: #fff;
+}
+
+.input {
+  color: #fff;
+  background: inherit;
+}
+
+a:hover {
+  color: #3273dc;
+  text-decoration: underline;
+}
+
+.dismiss {
+  color: #fff;
+  background: transparent;
+}
+
+.dismiss:hover {
+  color: #fff;
+}
+
+.button[disabled] {
+  background: inherit;
+}
