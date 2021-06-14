@@ -1,36 +1,60 @@
-body {
-  font-family: "IBM Plex Mono", -apple-system;
-}
-
 #root {
-  max-width: 700px;
-  background: #161b22;
+  padding: 3rem;
+  min-height: 100vh;
 }
 
-.title,
-strong {
-  color: #fff;
+body {
+  font-family: "Alegreya Sans", sans-serif;
+  background: #f6f6ef;
+  min-height: 100vh;
 }
 
-.input {
-  color: #fff;
-  background: inherit;
+.input:focus {
+  border-color: #ff6600;
+  box-shadow: none;
+}
+
+.search-story {
+  width: 30%;
+  background: #ff6600;
+}
+
+hr {
+  background: #dbdbdb;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+a {
+  color: #ff6600;
 }
 
 a:hover {
-  color: #3273dc;
-  text-decoration: underline;
+  color: #ff6600;
 }
 
-.dismiss {
-  color: #fff;
-  background: transparent;
+.story-grid {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
 }
 
-.dismiss:hover {
-  color: #fff;
+@media screen and (max-width: 600px) {
+  #root {
+    padding: 2rem;
+  }
+
+  .story-grid {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.button[disabled] {
-  background: inherit;
+@media screen and (min-width: 600px) and (max-width: 900px) {
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

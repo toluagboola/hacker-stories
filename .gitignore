@@ -2,3 +2,4 @@
 tsconfig.json
 yarn.lock
 react-app-env.d.ts
+/build

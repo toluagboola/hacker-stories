@@ -8,15 +8,17 @@ import React, {
 import axios from "axios";
 import "bulma/css/bulma.min.css";
 import "./App.css";
-import { Check } from "react-feather";
+import SearchForm from "./components/SearchForm";
+import List from "./components/List";
 
-type Story = {
+export type Story = {
   objectID: string;
   url: string;
   title: string;
   author: string;
   num_comments: number;
   points: number;
+  isRead: boolean;
 };
 
 type Stories = Array<Story>;
@@ -45,11 +47,17 @@ interface StoriesRemoveAction {
   payload: Story;
 }
 
+interface StoriesToggleReadAction {
+  type: "TOGGLE_READ";
+  payload: Story;
+}
+
 type StoriesAction =
   | StoriesFetchInitAction
   | StoriesFetchSuccessAction
   | StoriesFetchFailureAction
-  | StoriesRemoveAction;
+  | StoriesRemoveAction
+  | StoriesToggleReadAction;
 
 // Handle state transitions
 const storiesReducer = (state: StoriesState, action: StoriesAction) => {
@@ -61,11 +69,16 @@ const storiesReducer = (state: StoriesState, action: StoriesAction) => {
         isError: false,
       };
     case "STORIES_FETCH_SUCCESS":
+      const storiesArr = action.payload.map((story: Story) => {
+        story.isRead = false;
+        return story;
+      });
+      console.log(storiesArr);
       return {
         ...state,
         isLoading: false,
         isError: false,
-        data: action.payload,
+        data: storiesArr,
       };
     case "STORIES_FETCH_FAILURE":
       return {
@@ -73,13 +86,19 @@ const storiesReducer = (state: StoriesState, action: StoriesAction) => {
         isLoading: false,
         isError: true,
       };
-    case "REMOVE_STORY":
+    case "TOGGLE_READ":
+      const updatedArray = state.data.map((item) => {
+        if (action.payload.objectID === item.objectID) {
+          item.isRead = !item.isRead;
+        }
+        return item;
+      });
+
       return {
         ...state,
-        data: state.data.filter(
-          (story) => action.payload.objectID !== story.objectID
-        ),
+        data: updatedArray,
       };
+
     default:
       throw new Error();
   }
@@ -103,10 +122,6 @@ const useSemiPersistentState = (
 
   return [value, setValue];
 };
-
-// const getSumComments = (stories) => {
-//   return stories.data.reduce((result, value) => result + value.num_comments, 0);
-// };
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
@@ -140,10 +155,9 @@ const App = () => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  // Handle story removal from list
-  const handleRemoveStory = useCallback((item: Story) => {
+  const toggleReadState = useCallback((item: Story) => {
     dispatchStories({
-      type: "REMOVE_STORY",
+      type: "TOGGLE_READ",
       payload: item,
     });
   }, []);
@@ -158,12 +172,10 @@ const App = () => {
     event.preventDefault();
   };
 
-  // const sumComments = getSumComments(stories);
-
   return (
     <div className="container has-text-centered has-text-white">
       <h1 className="title is-3">Hacker Stories</h1>
-      {/*<h3 className="subtitle has-text-link">{sumComments} total comments</h3>*/}
+      <h2 className="subtitle">Find stories on Hacker News.</h2>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -176,160 +188,14 @@ const App = () => {
       {stories.isError && <p>Something went wrong...</p>}
 
       {stories.isLoading ? (
-        <p>Loading...</p>
+        <p className="has-text-dark is-size-4">Loading...</p>
+      ) : stories.data.length !== 0 ? (
+        <List list={stories.data} onToggleRead={toggleReadState} />
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        <p className="has-text-dark is-size-4">Not found...</p>
       )}
     </div>
   );
 };
 
-type InputWithLabelProps = {
-  id: string;
-  value: string;
-  type?: string;
-  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  isFocused?: boolean;
-  children?: React.ReactNode;
-};
-
-const InputWithLabel = ({
-  id,
-  value,
-  type = "text",
-  onInputChange,
-  isFocused,
-  children,
-}: InputWithLabelProps) => {
-  const inputRef = React.useRef<HTMLInputElement>(null!);
-
-  React.useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
-
-  return (
-    <div className="control">
-      <input
-        ref={inputRef}
-        className="input mb-4"
-        type={type}
-        id={id}
-        value={value}
-        onChange={onInputChange}
-        autoFocus={isFocused}
-        placeholder="Search for a story"
-      />
-    </div>
-  );
-};
-
-// class InputWithLabel extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.inputRef = React.createRef();
-//   }
-
-//   componentDidMount() {
-//     if (this.props.isFocused) {
-//       this.inputRef.current.focus();
-//     }
-//   }
-
-//   render() {
-//     const { id, type = "text", value, isFocused, onInputChange } = this.props;
-//     return (
-//       <div className="control">
-//         <input
-//           ref={this.inputRef}
-//           className="input mb-4"
-//           type={type}
-//           id={id}
-//           value={value}
-//           onChange={onInputChange}
-//           autoFocus={isFocused}
-//           placeholder="Search for a story"
-//         />
-//       </div>
-//     );
-//   }
-// }
-
-type ListProps = {
-  list: Stories;
-  onRemoveItem: (item: Story) => void;
-};
-
-const List = ({ list, onRemoveItem }: ListProps) => (
-  <div className="py-2">
-    {list.map((item) => (
-      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-    ))}
-  </div>
-);
-
-type ItemProps = {
-  item: Story;
-  onRemoveItem: (item: Story) => void;
-};
-
-const Item = ({ item, onRemoveItem }: ItemProps) => {
-  return (
-    <div className="py-3 has-text-left">
-      <p>
-        <a className="is-size-5 has-text-weight-medium" href={item.url}>
-          {item.title}
-        </a>
-      </p>
-      <p className="pb-1 is-capitalized">
-        <strong>Author:</strong> {item.author}
-      </p>
-      <p className="pb-1 is-capitalized">
-        <strong>Comments:</strong> {item.num_comments}
-      </p>
-      <p className="pb-1 is-capitalized">
-        <strong>Points:</strong> {item.points}
-      </p>
-      <button
-        type="button"
-        className="button is-small mt-2 dismiss"
-        onClick={() => onRemoveItem(item)}
-      >
-        <span className="icon">
-          <Check />
-        </span>
-        <span>Check</span>
-      </button>
-    </div>
-  );
-};
-
-type SearchFormProps = {
-  searchTerm: string;
-  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-};
-
-const SearchForm = ({
-  searchTerm,
-  onSearchInput,
-  onSearchSubmit,
-}: SearchFormProps) => (
-  <form onSubmit={onSearchSubmit}>
-    <InputWithLabel
-      id="search"
-      value={searchTerm}
-      isFocused
-      onInputChange={onSearchInput}
-    >
-      Search
-    </InputWithLabel>
-    <button className="button m-3" type="submit" disabled={!searchTerm}>
-      Search
-    </button>
-  </form>
-);
-
 export default App;
-export { SearchForm, InputWithLabel, List, Item };

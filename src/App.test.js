@@ -2,7 +2,9 @@
 import React from "react";
 import axios from "axios";
 import renderer from "react-test-renderer";
-import App, { Item, List, SearchForm } from "./App";
+import App from "./App";
+import List, { Item } from "./components/List";
+import SearchForm from "./components/SearchForm";
 
 jest.mock("axios");
 
