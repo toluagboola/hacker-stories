@@ -1,6 +1,6 @@
 # Hacker Stories
 
-An application that lets you search for articles from Hacker News.
+An application that allows the user to search for articles from Hacker News and provides a link to each one.
 
 ![Hacker stories app](https://github.com/toluagboola/hacker-stories/blob/master/hacker-stories.png)
 
